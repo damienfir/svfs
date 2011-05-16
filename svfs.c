@@ -235,6 +235,37 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 		
 }
 
+
+int copy(char* path, char* dest)
+{
+	my_log("copy src",path);
+	my_log("copy des",dest);
+	int sh = open(path, O_RDONLY); // source handle
+	int dh = create(path, O_WRONLY); // destination handle
+	if(sh == 0)
+		my_log("TG"," NOOB!");
+	if(dh == 0)
+		my_log("WTF", "LOLOLOL");
+
+	char buffer[256];
+
+	int l = 0;
+	int counter = 0;
+
+	while((l = read(sh, buffer, 256)))
+	{
+		write(dh, buffer, l);
+		counter += l;
+	}
+	char t[10];
+	sprintf(t, "%d", counter);
+	my_log("copy data", t);
+	close(sh);
+	close(dh);
+	return counter;
+}
+
+
 /** Get file attributes. */
 int svfs_getattr(const char *path, struct stat *statbuf) {
 	char fpath[PATH_MAX];
