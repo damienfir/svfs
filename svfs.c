@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/xattr.h>
+#include <sys/wait.h>
 #include <pthread.h>
 
 
@@ -23,6 +24,7 @@ static void svfs_fullpath(char fpath[PATH_MAX], const char *path) {
 }
 
 #define DEBUG
+#define MAX_SIZE 256
 
 #ifdef DEBUG
 static FILE *m_debug;
@@ -62,6 +64,20 @@ struct backuped_file_
     pbackuped_file next;
 };
 
+int copy(char* path, char* dest)
+{
+	int pid = fork();
+	int error;
+
+	if (pid <= 0) {
+		char * argv[2] = {path, dest};
+		execvp("cp", argv);
+	} else {
+		waitpid(pid, &error, 0);
+	}
+
+	return error;
+}
 
 pbackuped_file create_backuped_file(char* filename)
 {
@@ -146,6 +162,10 @@ pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 	return remove_backuped_file_by_file(list, find_file(*list, name));
 }
 
+void get_filename(pbackuped_file file, pbackup backup, char * dest) {
+	sprintf(dest, format, file->name, backup->id);
+}
+
 pbackup add_backup(pbackuped_file file)
 {
 	pbackup new = malloc(sizeof(backup));
@@ -163,12 +183,18 @@ pbackup add_backup(pbackuped_file file)
 			first = first->next;
 		}
 		first->next = new;
-	}
-	else // first backup of the list
+	} else { // first backup of the list
 		file->backups = new;
+	}
+
+	char new_filename[MAX_SIZE];
+	get_filename(file, new, new_filename);
+	copy(file->name, new_filename);
+
 	return new;
 }
 
+// ------------ function to call everywhere -------------
 void create_backup(pbackuped_file list, char* filename)
 {
 	pbackuped_file file = find_file(list, filename);
@@ -187,7 +213,7 @@ pbackup add_backup_by_name(pbackuped_file list, char* filename)
 
 void remove_backup_by_file(pbackuped_file file)
 {
-	char filename[256];
+	char filename[MAX_SIZE];
 
 	if(file->backups == 0)
 		return;
@@ -222,10 +248,10 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 	
 	while(head->next != NULL) 
 	{
-		char  old[256];
+		char  old[MAX_SIZE];
 		sprintf(old , format , old_filename , head->id);
 	
-		char new[256];
+		char new[MAX_SIZE];
 		sprintf(new , format , new_filename , head->id);
 		
 		rename(old, new);
@@ -235,34 +261,6 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 }
 
 
-int copy(char* path, char* dest)
-{
-	my_log("copy src",path);
-	my_log("copy des",dest);
-	int sh = open(path, O_RDONLY); // source handle
-	int dh = create(path, O_WRONLY); // destination handle
-	if(sh == 0)
-		my_log("TG"," NOOB!");
-	if(dh == 0)
-		my_log("WTF", "LOLOLOL");
-
-	char buffer[256];
-
-	int l = 0;
-	int counter = 0;
-
-	while((l = read(sh, buffer, 256)))
-	{
-		write(dh, buffer, l);
-		counter += l;
-	}
-	char t[10];
-	sprintf(t, "%d", counter);
-	my_log("copy data", t);
-	close(sh);
-	close(dh);
-	return counter;
-}
 
 
 /** Get file attributes. */
