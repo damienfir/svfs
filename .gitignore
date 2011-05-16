@@ -1,0 +1,5 @@
+*.log
+svfs
+example
+*.o
+*.DS_Store
