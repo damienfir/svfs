@@ -228,7 +228,6 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 		char new[256];
 		sprintf(new , format , new_filename , head->id);
 		
-		
 		rename(old, new);
 		head = head->next;
 	}
