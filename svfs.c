@@ -63,8 +63,6 @@ struct backuped_file_
 };
 
 
-
-
 pbackuped_file create_backuped_file(char* filename)
 {
     pbackuped_file f = malloc(sizeof(backuped_file));
@@ -101,8 +99,10 @@ pbackuped_file find_file(pbackuped_file list, char* filename)
 {
 	pbackuped_file file = NULL;
 
-	while(list->next != NULL) {
-		if (strcmp(list->name, filename)) {
+	while(list->next != NULL) 
+	{
+		if (strcmp(list->name, filename)) 
+		{
 			file = list;
 			break;
 		}
@@ -146,14 +146,6 @@ pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 	return remove_backuped_file_by_file(list, find_file(*list, name));
 }
 
-void rename_backuped_file(pbackuped_file list, char * oldname, char * newname) {
-	pbackuped_file file = find_file(oldname);
-	pbackup backups = file->backups;
-
-	while(backups->next != NULL)
-}
-
-// ------ backups -------
 pbackup add_backup(pbackuped_file file)
 {
 	pbackup new = malloc(sizeof(backup));
@@ -235,6 +227,7 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 	
 		char new[256];
 		sprintf(new , format , new_filename , head->id);
+		
 		
 		rename(old, new);
 		head = head->next;
