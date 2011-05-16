@@ -15,6 +15,7 @@
 #include <sys/xattr.h>
 #include <pthread.h>
 
+
 /* Stores the absolute path in "fpath", based on the file name given in "path" */
 static void svfs_fullpath(char fpath[PATH_MAX], const char *path) {
 	strcpy(fpath, SVFS_DATA->rootdir);
@@ -64,10 +65,12 @@ struct backuped_file_
 
 
 
-// ------ files -------
-pbackuped_file create_backuped_file(char* n)
+pbackuped_file create_backuped_file(char* filename)
 {
     pbackuped_file f = malloc(sizeof(backuped_file));
+	
+    f->name = calloc(sizeof(char) , strlen(filename) + 1);
+    strcpy(f->name , filename);
 
     f->N = 10;
     f->backups = 0;
@@ -212,6 +215,33 @@ void remove_backup_by_name(pbackuped_file list, char* filename)
 	remove_backup_by_file(find_file(list, filename));
 }
 
+void rename_backup_file(pbackuped_file list, char * old_filename , char * new_filename)
+{
+	pbackuped_file file = find_file(list, old_filename);
+	
+	free(file->name);
+
+	file->name = calloc(sizeof(char), strlen(new_filename)+1);
+	strcpy(file->name,new_filename);	
+	
+	//now rename all backups
+
+	pbackup head = file->backups;
+	
+	while(head->next != NULL) 
+	{
+		char  old[256];
+		sprintf(old , format , old_filename , head->id);
+	
+		char new[256];
+		sprintf(new , format , new_filename , head->id);
+		
+		rename(old, new);
+		head = head->next;
+	}
+		
+}
+
 /** Get file attributes. */
 int svfs_getattr(const char *path, struct stat *statbuf) {
 	char fpath[PATH_MAX];
@@ -343,7 +373,6 @@ int svfs_open(const char *path, struct fuse_file_info *fi) {
 	my_log("svfs_open", path);
 	svfs_fullpath(fpath, path);
 	my_log("svfs_open_full",fpath);
-
 	char t[2] = {(char)((fi->flags & O_WRONLY) + '0'),'\0'};
 	my_log("file open mode write",t);
 	fd = open(fpath, fi->flags);
