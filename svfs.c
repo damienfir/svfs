@@ -191,8 +191,8 @@ pbackup add_backup(pbackuped_file file)
 	char new_filename[MAX_SIZE];
 	char a[256];
 	sprintf(a, "%d", new->id);
-	my_log(a, new_filename);
 	get_filename(file, new, new_filename);
+	my_log(a, new_filename);
 	copy(file->name, new_filename);
 
 	return new;
