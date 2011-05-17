@@ -336,6 +336,28 @@ int svfs_rename(const char *path, const char *newpath) {
 	svfs_fullpath(fpath, path);
 	svfs_fullpath(fnewpath, newpath);
 
+	pbackuped_file f = find_file(list,fpath);
+	
+	if(file != 0)
+	{
+		free(file.name);
+		file.name = calloc(sizeof(char), PATH_MAX);
+		strcpy(file.name, fpath);
+
+		pbackup b = file.backups;
+
+		while(b != 0)
+		{
+			char new_name[PATH_MAX];
+			char old_name[PATH_MAX];
+			strcpy(old_name, fpath);
+			sprintf(new_name,format,fpath, b.id);
+			if(rename(old_name, new_name))
+				mylog("Error", "cannot rename a backup file");
+			b = b->next;
+		}
+	}
+
 	if (rename(fpath, fnewpath))
 		return -errno;
 	return 0;
