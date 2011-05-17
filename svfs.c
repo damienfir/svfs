@@ -88,7 +88,7 @@ pbackuped_file find_file(pbackuped_file list, char* filename)
 {
 	pbackuped_file file = NULL;
 
-	while(list->next != NULL) 
+	while(list != NULL) 
 	{
 		if (strcmp(list->name, filename)) 
 		{
@@ -248,7 +248,7 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 
 	pbackup head = file->backups;
 	
-	while(head->next != NULL) 
+	while(head != NULL) 
 	{
 		char  old[MAX_SIZE];
 		sprintf(old , format , old_filename , head->id);
