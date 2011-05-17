@@ -6,3 +6,16 @@ svfs.o : svfs.c params.h
 
 clean:
 	rm -f svfs *.o
+
+run:
+	rm svfs.log
+	make
+	./svfs example/rootdir/ example/mountdir/
+
+stop:
+	fusermount -u example/mountdir/
+	pkill svfs
+
+restart:
+	make stop
+	make run

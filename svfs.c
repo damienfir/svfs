@@ -166,15 +166,6 @@ pbackuped_file remove_backuped_file_by_file(pbackuped_file* list, pbackuped_file
 	return f;
 }
 
-pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
-{
-	my_log("remove_backuped_file", name);
-    if(list == 0)
-        return 0;
-	
-	return remove_backuped_file_by_file(list, find_file(*list, name));
-}
-
 pbackup add_backup(pbackuped_file file)
 {
 	my_log("Add Backup ", file->name);
@@ -199,9 +190,6 @@ pbackup add_backup(pbackuped_file file)
 	get_filename(file, new, new_filename);
 	int error = copy(file->name, new_filename);
 
-	char a[256];
-	sprintf(a, "%d", error);
-	my_log(a, "");
 	return new;
 }
 
