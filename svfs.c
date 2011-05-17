@@ -94,7 +94,8 @@ pbackuped_file find_file(pbackuped_file list, char* filename)
 
 	while(list != NULL) 
 	{
-		if (strcmp(list->name, filename)) 
+		my_log(list->name, filename);
+		if (!strcmp(list->name, filename)) 
 		{
 			file = list;
 			break;
@@ -365,7 +366,7 @@ int svfs_rename(const char *path, const char *newpath) {
 			char new_name[PATH_MAX];
 			char old_name[PATH_MAX];
 			strcpy(old_name, fpath);
-			sprintf(new_name,format,fpath, b->id);
+			sprintf(new_name,FORMAT,fpath, b->id);
 			if(rename(old_name, new_name))
 				my_log("Error", "cannot rename a backup file");
 			b = b->next;
