@@ -64,6 +64,8 @@ struct backuped_file_
     pbackuped_file next;
 };
 
+pbackuped_file list = NULL;
+
 int copy(char* src, char* dest)
 {
 	int pid = fork();
@@ -74,6 +76,7 @@ int copy(char* src, char* dest)
 		execvp("cp", argv);
 	} else {
 		waitpid(pid, &error, 0);
+		my_log(src, dest);
 	}
 
 	return error;
@@ -86,9 +89,10 @@ void get_filename(pbackuped_file file, pbackup backup, char * dest) {
 
 pbackuped_file find_file(pbackuped_file list, char* filename)
 {
+	my_log("find_file", filename);
 	pbackuped_file file = NULL;
 
-	while(list->next != NULL) 
+	while(list != NULL) 
 	{
 		if (strcmp(list->name, filename)) 
 		{
@@ -248,7 +252,7 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 
 	pbackup head = file->backups;
 	
-	while(head->next != NULL) 
+	while(head != NULL) 
 	{
 		char  old[MAX_SIZE];
 		sprintf(old , format , old_filename , head->id);
@@ -259,7 +263,6 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 		rename(old, new);
 		head = head->next;
 	}
-		
 }
 
 
@@ -421,6 +424,9 @@ int svfs_read(const char *path, char *buf, size_t size, off_t offset,
 int svfs_write(const char *path, const char *buf, size_t size, off_t offset,
 		struct fuse_file_info *fi) {
 	my_log("svfs_write", path);
+	char fpath[PATH_MAX];
+	svfs_fullpath(fpath, path);
+	create_backup(list, fpath);
 	return pwrite(fi->fh, buf, size, offset);
 }
 
@@ -531,7 +537,6 @@ void svfs_usage() {
 	exit(1);
 }
 
-pbackuped_file list;
 
 // 10 mins = time of live of backups
 #define BASE_LIVING_TIME 600
