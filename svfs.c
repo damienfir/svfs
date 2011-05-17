@@ -64,8 +64,12 @@ struct backuped_file_
     pbackuped_file next;
 };
 
+pbackuped_file list = NULL;
+
 int copy(char* src, char* dest)
 {
+	my_log("copy", "");
+	pbackuped_file file = NULL;
 	int pid = fork();
 	int error;
 
@@ -74,6 +78,7 @@ int copy(char* src, char* dest)
 		execvp("cp", argv);
 	} else {
 		waitpid(pid, &error, 0);
+		my_log(src, dest);
 	}
 
 	return error;
@@ -86,9 +91,10 @@ void get_filename(pbackuped_file file, pbackup backup, char * dest) {
 
 pbackuped_file find_file(pbackuped_file list, char* filename)
 {
+	my_log("find_file", filename);
 	pbackuped_file file = NULL;
 
-	while(list->next != NULL) 
+	while(list != NULL) 
 	{
 		if (strcmp(list->name, filename)) 
 		{
@@ -104,6 +110,7 @@ pbackuped_file find_file(pbackuped_file list, char* filename)
 
 pbackuped_file create_backuped_file(char* filename)
 {
+	my_log("create_backuped_file", filename);
     pbackuped_file f = malloc(sizeof(backuped_file));
 	
     f->name = calloc(sizeof(char) , strlen(filename) + 1);
@@ -119,6 +126,7 @@ pbackuped_file create_backuped_file(char* filename)
 
 pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
 {
+	my_log("add_backuped_file", name);
     pbackuped_file n = create_backuped_file(name);
 
     if(list == 0)
@@ -136,6 +144,7 @@ pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
 
 pbackuped_file remove_backuped_file_by_file(pbackuped_file* list, pbackuped_file f)
 {
+	my_log("remove_backuped_file_by_file", "");
     if(list == 0)
         return 0;
 
@@ -162,6 +171,7 @@ pbackuped_file remove_backuped_file_by_file(pbackuped_file* list, pbackuped_file
 
 pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 {
+	my_log("remove_backuped_file", name);
     if(list == 0)
         return 0;
 	
@@ -170,6 +180,7 @@ pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 
 pbackup add_backup(pbackuped_file file)
 {
+	my_log("Add Backup ", file->name);
 	pbackup new = malloc(sizeof(backup));
 	new->time = time(NULL);
 	new->id = file->last_id + 1;
@@ -199,6 +210,7 @@ pbackup add_backup(pbackuped_file file)
 // ------------ function to call everywhere -------------
 void create_backup(pbackuped_file list, char* filename)
 {
+	my_log("create_backup", filename);
 	pbackuped_file file = find_file(list, filename);
 
 	if (file == NULL)
@@ -210,11 +222,13 @@ void create_backup(pbackuped_file list, char* filename)
 
 pbackup add_backup_by_name(pbackuped_file list, char* filename) 
 {
+	my_log("Add backup by name ",filename);
 	return add_backup(find_file(list, filename));
 }
 
 void remove_backup_by_file(pbackuped_file file)
 {
+	my_log("Remove backup by file ", file->name);
 	char filename[MAX_SIZE];
 
 	if(file->backups == 0)
@@ -232,11 +246,13 @@ void remove_backup_by_file(pbackuped_file file)
 
 void remove_backup_by_name(pbackuped_file list, char* filename) 
 {
+	my_log("Remove backup by name ",filename)
 	remove_backup_by_file(find_file(list, filename));
 }
 
 void rename_backup_file(pbackuped_file list, char * old_filename , char * new_filename)
 {
+	my_log("rename_backup_file", old_filename);
 	pbackuped_file file = find_file(list, old_filename);
 	
 	free(file->name);
@@ -248,7 +264,7 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 
 	pbackup head = file->backups;
 	
-	while(head->next != NULL) 
+	while(head != NULL) 
 	{
 		char  old[MAX_SIZE];
 		sprintf(old , format , old_filename , head->id);
@@ -259,7 +275,6 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 		rename(old, new);
 		head = head->next;
 	}
-		
 }
 
 
@@ -443,6 +458,9 @@ int svfs_read(const char *path, char *buf, size_t size, off_t offset,
 int svfs_write(const char *path, const char *buf, size_t size, off_t offset,
 		struct fuse_file_info *fi) {
 	my_log("svfs_write", path);
+	char fpath[PATH_MAX];
+	svfs_fullpath(fpath, path);
+	create_backup(list, fpath);
 	return pwrite(fi->fh, buf, size, offset);
 }
 
@@ -553,7 +571,6 @@ void svfs_usage() {
 	exit(1);
 }
 
-pbackuped_file list;
 
 // 10 mins = time of live of backups
 #define BASE_LIVING_TIME 600
