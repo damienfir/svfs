@@ -42,132 +42,7 @@ static void my_log(char *function, const char *path) {
 typedef struct backup_ backup;
 typedef backup* pbackup;
 struct backup_
-{
-    int id;
-    time_t time;
 
-    pbackup next;
-};
-
-
-typedef struct backuped_file_ backuped_file;
-typedef backuped_file * pbackuped_file;
-struct backuped_file_
-{
-    char* name;
-    //simple list system with head maintaining the id of the backuped file
-    pbackup backups;
-    int N;
-
-	int last_id;
-    int open;
-    pbackuped_file next;
-};
-
-pbackuped_file list = NULL;
-
-int copy(char* src, char* dest)
-{
-	my_log("copy", src);
-	int pid = fork();
-	int error;
-
-	if (pid <= 0) {
-		char * argv[] = {"cp", src, dest, NULL};
-		execvp("cp", argv);
-	} else {
-		waitpid(pid, &error, 0);
-	}
-
-	return error;
-}
-
-
-void get_filename(pbackuped_file file, pbackup backup, char * dest) {
-	sprintf(dest, FORMAT, file->name, backup->id);
-}
-
-pbackuped_file find_file(pbackuped_file list, char* filename)
-{
-	my_log("find_file", filename);
-	pbackuped_file file = NULL;
-
-	while(list != NULL) 
-	{
-		if (strcmp(list->name, filename)) 
-		{
-			file = list;
-			break;
-		}
-		list = list->next;
-	}
-			
-	return file;
-}
-
-
-pbackuped_file create_backuped_file(char* filename)
-{
-	my_log("create_backuped_file", filename);
-    pbackuped_file f = malloc(sizeof(backuped_file));
-	
-    f->name = calloc(sizeof(char) , strlen(filename) + 1);
-    strcpy(f->name , filename);
-
-    f->N = 10;
-    f->backups = 0;
-    f->next = 0;
-	f->last_id = 0;
-    f->open = 1;
-	return f;
-};
-
-pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
-{
-	my_log("add_backuped_file", name);
-    pbackuped_file n = create_backuped_file(name);
-
-    if(*list == 0)
-        *list = n;
-    else
-    {
-        pbackuped_file l = (*list);
-        while(l->next != 0)
-            l = l->next;
-        l->next = n;
-    }
-
-	return n;
-}
-
-pbackuped_file remove_backuped_file_by_file(pbackuped_file* list, pbackuped_file f)
-{
-	my_log("remove_backuped_file_by_file", "");
-    if(list == 0)
-        return 0;
-
-    pbackuped_file l = *list;
-    pbackuped_file p = 0;
-    do
-    {
-        if(l == f)
-        {
-            if(p == 0) // first item
-				(*list) = l->next;
-			else
-				p->next = l->next;
-			
-			break;
-        }
-        else
-            p = l;
-        l = l->next;
-    }
-    while(l != 0);
-	return f;
-}
-
-pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 {
 	my_log("remove_backuped_file", name);
     if(list == 0)
@@ -365,7 +240,7 @@ int svfs_rename(const char *path, const char *newpath) {
 			char new_name[PATH_MAX];
 			char old_name[PATH_MAX];
 			strcpy(old_name, fpath);
-			sprintf(new_name,format,fpath, b->id);
+			sprintf(new_name,FORMAT,fpath, b->id);
 			if(rename(old_name, new_name))
 				my_log("Error", "cannot rename a backup file");
 			b = b->next;
