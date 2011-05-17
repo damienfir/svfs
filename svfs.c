@@ -69,7 +69,6 @@ pbackuped_file list = NULL;
 int copy(char* src, char* dest)
 {
 	my_log("copy", "");
-	pbackuped_file file = NULL;
 	int pid = fork();
 	int error;
 
@@ -246,7 +245,7 @@ void remove_backup_by_file(pbackuped_file file)
 
 void remove_backup_by_name(pbackuped_file list, char* filename) 
 {
-	my_log("Remove backup by name ",filename)
+	my_log("Remove backup by name ",filename);
 	remove_backup_by_file(find_file(list, filename));
 }
 
@@ -353,22 +352,22 @@ int svfs_rename(const char *path, const char *newpath) {
 
 	pbackuped_file f = find_file(list,fpath);
 	
-	if(file != 0)
+	if(f != 0)
 	{
-		free(file.name);
-		file.name = calloc(sizeof(char), PATH_MAX);
-		strcpy(file.name, fpath);
+		free(f->name);
+		f->name = calloc(sizeof(char), PATH_MAX);
+		strcpy(f->name, fpath);
 
-		pbackup b = file.backups;
+		pbackup b = f->backups;
 
 		while(b != 0)
 		{
 			char new_name[PATH_MAX];
 			char old_name[PATH_MAX];
 			strcpy(old_name, fpath);
-			sprintf(new_name,format,fpath, b.id);
+			sprintf(new_name,format,fpath, b->id);
 			if(rename(old_name, new_name))
-				mylog("Error", "cannot rename a backup file");
+				my_log("Error", "cannot rename a backup file");
 			b = b->next;
 		}
 	}
