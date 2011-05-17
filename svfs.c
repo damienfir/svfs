@@ -68,6 +68,8 @@ pbackuped_file list = NULL;
 
 int copy(char* src, char* dest)
 {
+	my_log("copy", "");
+	pbackuped_file file = NULL;
 	int pid = fork();
 	int error;
 
@@ -108,6 +110,7 @@ pbackuped_file find_file(pbackuped_file list, char* filename)
 
 pbackuped_file create_backuped_file(char* filename)
 {
+	my_log("create_backuped_file", filename);
     pbackuped_file f = malloc(sizeof(backuped_file));
 	
     f->name = calloc(sizeof(char) , strlen(filename) + 1);
@@ -123,6 +126,7 @@ pbackuped_file create_backuped_file(char* filename)
 
 pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
 {
+	my_log("add_backuped_file", name);
     pbackuped_file n = create_backuped_file(name);
 
     if(list == 0)
@@ -140,6 +144,7 @@ pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
 
 pbackuped_file remove_backuped_file_by_file(pbackuped_file* list, pbackuped_file f)
 {
+	my_log("remove_backuped_file_by_file", "");
     if(list == 0)
         return 0;
 
@@ -166,6 +171,7 @@ pbackuped_file remove_backuped_file_by_file(pbackuped_file* list, pbackuped_file
 
 pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 {
+	my_log("remove_backuped_file", name);
     if(list == 0)
         return 0;
 	
@@ -174,6 +180,7 @@ pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 
 pbackup add_backup(pbackuped_file file)
 {
+	my_log("add_backup", "");
 	pbackup new = malloc(sizeof(backup));
 	new->time = time(NULL);
 	new->id = file->last_id + 1;
@@ -241,6 +248,7 @@ void remove_backup_by_name(pbackuped_file list, char* filename)
 
 void rename_backup_file(pbackuped_file list, char * old_filename , char * new_filename)
 {
+	my_log("rename_backup_file", old_filename);
 	pbackuped_file file = find_file(list, old_filename);
 	
 	free(file->name);
