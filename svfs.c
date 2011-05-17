@@ -64,13 +64,13 @@ struct backuped_file_
     pbackuped_file next;
 };
 
-int copy(char* path, char* dest)
+int copy(char* src, char* dest)
 {
 	int pid = fork();
 	int error;
 
 	if (pid <= 0) {
-		char * argv[2] = {path, dest};
+		char * argv[2] = {src, dest};
 		execvp("cp", argv);
 	} else {
 		waitpid(pid, &error, 0);
@@ -78,6 +78,29 @@ int copy(char* path, char* dest)
 
 	return error;
 }
+
+
+void get_filename(pbackuped_file file, pbackup backup, char * dest) {
+	sprintf(dest, format, file->name, backup->id);
+}
+
+pbackuped_file find_file(pbackuped_file list, char* filename)
+{
+	pbackuped_file file = NULL;
+
+	while(list->next != NULL) 
+	{
+		if (strcmp(list->name, filename)) 
+		{
+			file = list;
+			break;
+		}
+		list = list->next;
+	}
+			
+	return file;
+}
+
 
 pbackuped_file create_backuped_file(char* filename)
 {
@@ -109,23 +132,6 @@ pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
     }
 
 	return n;
-}
-
-pbackuped_file find_file(pbackuped_file list, char* filename)
-{
-	pbackuped_file file = NULL;
-
-	while(list->next != NULL) 
-	{
-		if (strcmp(list->name, filename)) 
-		{
-			file = list;
-			break;
-		}
-		list = list->next;
-	}
-			
-	return file;
 }
 
 pbackuped_file remove_backuped_file_by_file(pbackuped_file* list, pbackuped_file f)
@@ -160,10 +166,6 @@ pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
         return 0;
 	
 	return remove_backuped_file_by_file(list, find_file(*list, name));
-}
-
-void get_filename(pbackuped_file file, pbackup backup, char * dest) {
-	sprintf(dest, format, file->name, backup->id);
 }
 
 pbackup add_backup(pbackuped_file file)
