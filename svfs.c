@@ -199,13 +199,13 @@ pbackup add_backup(pbackuped_file file)
 }
 
 // ------------ function to call everywhere -------------
-void create_backup(pbackuped_file list, char* filename)
+void create_backup(pbackuped_file* list, char* filename)
 {
 	my_log("create_backup", filename);
-	pbackuped_file file = find_file(list, filename);
+	pbackuped_file file = find_file(*list, filename);
 
 	if (file == NULL)
-		file = add_backuped_file(&list, filename);
+		file = add_backuped_file(list, filename);
 
 	add_backup(file); 
 }
@@ -451,7 +451,7 @@ int svfs_write(const char *path, const char *buf, size_t size, off_t offset,
 	my_log("svfs_write", path);
 	char fpath[PATH_MAX];
 	svfs_fullpath(fpath, path);
-	create_backup(list, fpath);
+	create_backup(&list, fpath);
 	return pwrite(fi->fh, buf, size, offset);
 }
 

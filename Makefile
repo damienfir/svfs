@@ -13,7 +13,7 @@ run:
 	./svfs example/rootdir/ example/mountdir/
 
 stop:
-	fusermount -u example/rootdir/
+	fusermount -u example/mountdir/
 	pkill svfs
 
 restart:
