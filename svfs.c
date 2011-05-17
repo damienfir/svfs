@@ -37,7 +37,7 @@ static void my_log(char *function, const char *path) {
 #endif
 }
 
-char format[10] = "%s.%d";
+#define FORMAT "%s.%d"
 
 typedef struct backup_ backup;
 typedef backup* pbackup;
@@ -68,17 +68,15 @@ pbackuped_file list = NULL;
 
 int copy(char* src, char* dest)
 {
-	my_log("copy", "");
-	pbackuped_file file = NULL;
+	my_log("copy", src);
 	int pid = fork();
 	int error;
 
 	if (pid <= 0) {
-		char * argv[2] = {src, dest};
+		char * argv[] = {"cp", src, dest, NULL};
 		execvp("cp", argv);
 	} else {
 		waitpid(pid, &error, 0);
-		my_log(src, dest);
 	}
 
 	return error;
@@ -86,7 +84,7 @@ int copy(char* src, char* dest)
 
 
 void get_filename(pbackuped_file file, pbackup backup, char * dest) {
-	sprintf(dest, format, file->name, backup->id);
+	sprintf(dest, FORMAT, file->name, backup->id);
 }
 
 pbackuped_file find_file(pbackuped_file list, char* filename)
@@ -129,8 +127,8 @@ pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
 	my_log("add_backuped_file", name);
     pbackuped_file n = create_backuped_file(name);
 
-    if(list == 0)
-        (*list) = n;
+    if(*list == 0)
+        *list = n;
     else
     {
         pbackuped_file l = (*list);
@@ -183,10 +181,8 @@ pbackup add_backup(pbackuped_file file)
 	my_log("Add Backup ", file->name);
 	pbackup new = malloc(sizeof(backup));
 	new->time = time(NULL);
-	new->id = file->last_id + 1;
+	new->id = ++(file->last_id);
 	new->next = NULL;
-
-	file->last_id = new->id;
 
 	pbackup first = file->backups;
 	if(first != 0) // backups already exist
@@ -201,6 +197,9 @@ pbackup add_backup(pbackuped_file file)
 	}
 
 	char new_filename[MAX_SIZE];
+	char a[256];
+	sprintf(a, "%d", new->id);
+	my_log(a, new_filename);
 	get_filename(file, new, new_filename);
 	copy(file->name, new_filename);
 
@@ -235,7 +234,7 @@ void remove_backup_by_file(pbackuped_file file)
 		return;
 
 	pbackup backup = file->backups;
-	sprintf(filename, format, file->name, backup->id);
+	sprintf(filename, FORMAT, file->name, backup->id);
 
 	file->backups = backup->next;
 	free(backup);
@@ -246,7 +245,7 @@ void remove_backup_by_file(pbackuped_file file)
 
 void remove_backup_by_name(pbackuped_file list, char* filename) 
 {
-	my_log("Remove backup by name ",filename)
+	my_log("Remove backup by name ",filename);
 	remove_backup_by_file(find_file(list, filename));
 }
 
@@ -267,10 +266,10 @@ void rename_backup_file(pbackuped_file list, char * old_filename , char * new_fi
 	while(head != NULL) 
 	{
 		char  old[MAX_SIZE];
-		sprintf(old , format , old_filename , head->id);
+		sprintf(old , FORMAT , old_filename , head->id);
 	
 		char new[MAX_SIZE];
-		sprintf(new , format , new_filename , head->id);
+		sprintf(new , FORMAT , new_filename , head->id);
 		
 		rename(old, new);
 		head = head->next;
