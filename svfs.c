@@ -174,6 +174,7 @@ pbackuped_file remove_backuped_file(pbackuped_file* list, char* name)
 
 pbackup add_backup(pbackuped_file file)
 {
+	my_log("Add Backup ", file->name);
 	pbackup new = malloc(sizeof(backup));
 	new->time = time(NULL);
 	new->id = file->last_id + 1;
@@ -203,6 +204,7 @@ pbackup add_backup(pbackuped_file file)
 // ------------ function to call everywhere -------------
 void create_backup(pbackuped_file list, char* filename)
 {
+	my_log("create_backup", filename);
 	pbackuped_file file = find_file(list, filename);
 
 	if (file == NULL)
@@ -214,11 +216,13 @@ void create_backup(pbackuped_file list, char* filename)
 
 pbackup add_backup_by_name(pbackuped_file list, char* filename) 
 {
+	my_log("Add backup by name ",filename);
 	return add_backup(find_file(list, filename));
 }
 
 void remove_backup_by_file(pbackuped_file file)
 {
+	my_log("Remove backup by file ", file->name);
 	char filename[MAX_SIZE];
 
 	if(file->backups == 0)
@@ -236,6 +240,7 @@ void remove_backup_by_file(pbackuped_file file)
 
 void remove_backup_by_name(pbackuped_file list, char* filename) 
 {
+	my_log("Remove backup by name ",filename)
 	remove_backup_by_file(find_file(list, filename));
 }
 
