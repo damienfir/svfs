@@ -59,6 +59,7 @@ struct backuped_file_
     pbackup backups;
     int N;
 
+	int created;
 	int last_id;
     int open;
     pbackuped_file next;
@@ -119,6 +120,7 @@ pbackuped_file create_backuped_file(char* filename)
     f->next = 0;
 	f->last_id = 0;
     f->open = 1;
+	f->created = 0;
 	return f;
 };
 
@@ -188,7 +190,7 @@ pbackup add_backup(pbackuped_file file)
 
 	char new_filename[MAX_SIZE];
 	get_filename(file, new, new_filename);
-	int error = copy(file->name, new_filename);
+	copy(file->name, new_filename);
 
 	return new;
 }
@@ -201,7 +203,12 @@ void create_backup(pbackuped_file * list, char* filename)
 
 	if (file == NULL)
 		file = add_backuped_file(list, filename);
-
+	else
+	{
+		//if file just have been created no need to backup cause file empty
+		if(file->created != 0)
+			return;
+	}
 	add_backup(file); 
 }
 
@@ -341,22 +348,7 @@ int svfs_rename(const char *path, const char *newpath) {
 	
 	if(f != 0)
 	{
-		free(f->name);
-		f->name = calloc(sizeof(char), PATH_MAX);
-		strcpy(f->name, fpath);
-
-		pbackup b = f->backups;
-
-		while(b != 0)
-		{
-			char new_name[PATH_MAX];
-			char old_name[PATH_MAX];
-			strcpy(old_name, fpath);
-			sprintf(new_name,FORMAT,fpath, b->id);
-			if(rename(old_name, new_name))
-				my_log("Error", "cannot rename a backup file");
-			b = b->next;
-		}
+		rename_backup_file(list,fpath, fnewpath);
 	}
 
 	if (rename(fpath, fnewpath))
@@ -394,7 +386,7 @@ int svfs_truncate(const char *path, off_t newsize) {
 
 	my_log("svfs_truncate", path);
 	svfs_fullpath(fpath, path);
-
+	
 	if (truncate(fpath, newsize))
 		return -errno;
 	return 0;
@@ -423,7 +415,8 @@ int svfs_open(const char *path, struct fuse_file_info *fi) {
 	my_log("file open mode write",t);
 	fd = open(fpath, fi->flags);
 	fi->fh = fd;
-
+	create_backup(&list, fpath);
+	
 	if (fd < 0)
 		return -1;
 
@@ -446,7 +439,7 @@ int svfs_write(const char *path, const char *buf, size_t size, off_t offset,
 	my_log("svfs_write", path);
 	char fpath[PATH_MAX];
 	svfs_fullpath(fpath, path);
-	create_backup(&list, fpath);
+	//create_backup(&list, fpath);
 	return pwrite(fi->fh, buf, size, offset);
 }
 
@@ -506,10 +499,7 @@ int svfs_releasedir(const char *path, struct fuse_file_info *fi) {
 	return 0;
 }
 
-/** Initialize filesystem */
-void *svfs_init(struct fuse_conn_info *conn) {
-	return SVFS_DATA;
-}
+
 
 /** Clean up filesystem */
 void svfs_destroy(void *userdata) {
@@ -522,12 +512,78 @@ int svfs_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
 
 	my_log("svfs_create", path);
 	svfs_fullpath(fpath, path);
-
+	pbackuped_file f = create_backuped_file(fpath);
+	f->created = 1;
+	add_backuped_file(&list, f);
 	fd = creat(fpath, mode);
 	fi->fh = fd;
 	if (fd < 0)
 		return -1;
 	return 0;
+}
+
+// 10 mins = time of live of backups
+#define BASE_LIVING_TIME 5
+#define DELTA_T 1
+
+void* GarbageCollector(pbackuped_file* list)
+{
+	my_log("Garbage collector", "running ...");
+    while(1)
+    {
+		my_log("Garbage collector", "collectoring");
+        int act = time(0);
+        pbackuped_file l = *list;
+        //list non empty -> backup exist
+        while(l != 0)
+        {
+			my_log("Garbage collector check", l->name); 
+            int n = l->N;
+            pbackup b = l->backups;
+            while(b != 0)
+            {
+                pbackup temp = b->next;
+                if(act - b->time > n) //
+                    remove_backup_by_file(l);
+                else
+                    break; // only more recent backup are comming
+                b = temp;
+            }
+            int c;
+            for(c = 0, b = l->backups; b != 0; c++, b = b->next);
+
+            // adaptive N
+            // actually adds x minutes where x is the number of backup files create per minutes
+            l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
+
+            // if their is no more backups and the file is closed -> remove it
+            pbackuped_file temp = l->next;
+            if(c == 0 && l->open == 0)
+                remove_backuped_file_by_file(list, l);
+
+            l = temp;
+        }
+		my_log("Garbage collector", "sleeping");
+        sleep(DELTA_T);
+		//char time[2];
+		//time[0] = c/10 + '0';
+		//time[1] = c % 10 + '0';
+		//my_log("Garbage collector slept", time);
+    }
+	my_log("Garbage collector", "ended");
+    exit(0);
+}
+
+pthread_t thread;
+
+/** Initialize filesystem */
+void *svfs_init(struct fuse_conn_info *conn) {
+	
+	int r = pthread_create(&thread,0, GarbageCollector,(void*)(&list));
+	if(r)
+		my_log("Error", "thread not launched");
+
+	return SVFS_DATA;
 }
 
 struct fuse_operations svfs_oper = {
@@ -558,57 +614,6 @@ void svfs_usage() {
 }
 
 
-// 10 mins = time of live of backups
-#define BASE_LIVING_TIME 5
-
-void* GarbageCollector(void* threadid)
-{
-	my_log("Garbage collector", "running ...");
-    while(1)
-    {
-		my_log("Garbage collector", "collectoring");
-        int act = time(0);
-        pbackuped_file l = list;
-        //list non empty -> backup exist
-        while(l != 0)
-        {
-			my_log("Garbage collector check", l->name); 
-            int n = l->N;
-            pbackup b = l->backups;
-            while(b != 0)
-            {
-                pbackup temp = b->next;
-                if(act - b->time > n) //
-                    remove_backup_by_file(l);
-                else
-                    break; // only more recent backup are comming
-                b = temp;
-            }
-            int c;
-            for(c = 0, b = l->backups; b != 0; c++, b = b->next);
-
-            // adaptive N
-            // actually adds x minutes where x is the number of backup files create per minutes
-            //l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
-
-            // if their is no more backups and the file is closed -> remove it
-            pbackuped_file temp = l->next;
-            if(c == 0 && l->open == 0)
-                remove_backuped_file_by_file(&list, l);
-
-            l = temp;
-        }
-		my_log("Garbage collector", "sleeping");
-        int c = sleep(1);
-		char time[2];
-		time[0] = c/10 + '0';
-		time[1] = c % 10 + '0';
-		my_log("Garbage collector slept", time);
-    }
-	my_log("Garbage collector", "ended");
-    exit(0);
-}
-
 int main(int argc, char *argv[]) {
 	int i;
 	struct svfs_state *svfs_data;
@@ -633,11 +638,8 @@ int main(int argc, char *argv[]) {
 	argv[i] = argv[i + 1];
 	argc--;
 
-	pthread_t thread;
-	long t;
-	int r = pthread_create(&thread,0, GarbageCollector,(void*)t);
-	if(r)
-		my_log("Error", "thread not launched");
+	
+	my_log("Error", "launching main");
 	// We should not return from here
 	return fuse_main(argc, argv, &svfs_oper, svfs_data);
 }
