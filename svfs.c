@@ -94,7 +94,6 @@ pbackuped_file find_file(pbackuped_file list, char* filename)
 
 	while(list != NULL) 
 	{
-		my_log(list->name, filename);
 		if (!strcmp(list->name, filename)) 
 		{
 			file = list;
@@ -113,7 +112,7 @@ pbackuped_file create_backuped_file(char* filename)
     pbackuped_file f = malloc(sizeof(backuped_file));
 	
     f->name = calloc(sizeof(char) , strlen(filename) + 1);
-    strcpy(f->name , filename);
+    strcpy(f->name, filename);
 
     f->N = 10;
     f->backups = 0;
@@ -128,10 +127,9 @@ pbackuped_file add_backuped_file(pbackuped_file* list, char* name)
 	my_log("add_backuped_file", name);
     pbackuped_file n = create_backuped_file(name);
 
-    if(*list == 0)
+    if(*list == 0) {
         *list = n;
-    else
-    {
+	} else {
         pbackuped_file l = (*list);
         while(l->next != 0)
             l = l->next;
@@ -189,17 +187,14 @@ pbackup add_backup(pbackuped_file file)
 	}
 
 	char new_filename[MAX_SIZE];
-	char a[256];
-	sprintf(a, "%d", new->id);
 	get_filename(file, new, new_filename);
-	my_log(a, new_filename);
-	copy(file->name, new_filename);
+	int error = copy(file->name, new_filename);
 
 	return new;
 }
 
 // ------------ function to call everywhere -------------
-void create_backup(pbackuped_file* list, char* filename)
+void create_backup(pbackuped_file * list, char* filename)
 {
 	my_log("create_backup", filename);
 	pbackuped_file file = find_file(*list, filename);
