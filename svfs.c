@@ -564,9 +564,9 @@ void svfs_usage() {
 
 
 // 10 mins = time of live of backups
-#define BASE_LIVING_TIME 600
+#define BASE_LIVING_TIME 5
 
-void GarbageCollector()
+void* GarbageCollector(void* threadid)
 {
 	my_log("Garbage collector", "running ...");
     while(1)
@@ -577,6 +577,7 @@ void GarbageCollector()
         //list non empty -> backup exist
         while(l != 0)
         {
+			my_log("Garbage collector check", l->name); 
             int n = l->N;
             pbackup b = l->backups;
             while(b != 0)
@@ -593,7 +594,7 @@ void GarbageCollector()
 
             // adaptive N
             // actually adds x minutes where x is the number of backup files create per minutes
-            l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
+            //l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
 
             // if their is no more backups and the file is closed -> remove it
             pbackuped_file temp = l->next;
@@ -603,12 +604,13 @@ void GarbageCollector()
             l = temp;
         }
 		my_log("Garbage collector", "sleeping");
-        int c = sleep(60);
+        int c = sleep(1);
 		char time[2];
 		time[0] = c/10 + '0';
 		time[1] = c % 10 + '0';
 		my_log("Garbage collector slept", time);
     }
+	my_log("Garbage collector", "ended");
     exit(0);
 }
 
@@ -636,11 +638,11 @@ int main(int argc, char *argv[]) {
 	argv[i] = argv[i + 1];
 	argc--;
 
-   int pid = fork();
-
-   if(pid <= 0)
-		GarbageCollector();
-
+	pthread_t thread;
+	long t;
+	int r = pthread_create(&thread,0, GarbageCollector,(void*)t);
+	if(r)
+		my_log("Error", "thread not launched");
 	// We should not return from here
 	return fuse_main(argc, argv, &svfs_oper, svfs_data);
 }
