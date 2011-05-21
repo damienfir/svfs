@@ -207,7 +207,10 @@ void create_backup(pbackuped_file * list, char* filename)
 	{
 		//if file just have been created no need to backup cause file empty
 		if(file->created != 0)
+		{
+			file->created = 0;
 			return;
+		}
 	}
 	add_backup(file); 
 }
@@ -410,12 +413,18 @@ int svfs_open(const char *path, struct fuse_file_info *fi) {
 
 	my_log("svfs_open", path);
 	svfs_fullpath(fpath, path);
-	my_log("svfs_open_full",fpath);
 	char t[2] = {(char)((fi->flags & O_WRONLY) + '0'),'\0'};
 	my_log("file open mode write",t);
 	fd = open(fpath, fi->flags);
 	fi->fh = fd;
-	create_backup(&list, fpath);
+
+	if(O_CREAT & fi->flags)
+	{
+		my_log("Creating a new file", "");
+		add_backuped_file(&list, fpath);
+	}
+	else if((fi->flags & O_WRONLY) | (fi->flags & O_RDWR))
+		create_backup(&list, fpath);
 	
 	if (fd < 0)
 		return -1;
@@ -512,16 +521,16 @@ int svfs_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
 
 	my_log("svfs_create", path);
 	svfs_fullpath(fpath, path);
-	pbackuped_file f = create_backuped_file(fpath);
+
+	pbackuped_file f = add_backuped_file(&list,fpath);
 	f->created = 1;
-	add_backuped_file(&list, f);
+
 	fd = creat(fpath, mode);
 	fi->fh = fd;
 	if (fd < 0)
 		return -1;
 	return 0;
 }
-
 // 10 mins = time of live of backups
 #define BASE_LIVING_TIME 5
 #define DELTA_T 1
@@ -554,7 +563,7 @@ void* GarbageCollector(pbackuped_file* list)
 
             // adaptive N
             // actually adds x minutes where x is the number of backup files create per minutes
-            l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
+            //l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
 
             // if their is no more backups and the file is closed -> remove it
             pbackuped_file temp = l->next;
