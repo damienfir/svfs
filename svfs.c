@@ -324,6 +324,9 @@ int svfs_unlink(const char *path) {
 	my_log("svfs_unlink", path);
 	svfs_fullpath(fpath, path);
 
+	// create a backup when the file is about to be deleted	
+	create_backup(&list, fpath);
+	
 	if(unlink(fpath))
 		return -errno;
 	return 0;
