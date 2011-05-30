@@ -6,11 +6,19 @@
 
 \title{Simple Versioning File System}
 \author{Louis Lettry, Nicolas Sanglard, Damien Firmenich}
-
+\date{}	
 
 \begin{document}
-
 \maketitle
 
+\section{Introduction}
+The aim of the project is to implement a file system which we can use to manipulate standard files, in addition to the already existing file system. The FUSE library is well suited for this job, because it allows us to manipulate files directly in user space, thus avoiding any kernel failures. FUSE works by setting callbacks for every file manipulation, and sets those callbacks on a mount point defined when launching the file system.
+
+The file system we had to implement is a simple versioning file system, which keeps copy of modified files during a precise number of minutes.
+
+\section{SVFS}
+The implementation of the Simple Versioning File System was done using 2-level linked lists. The first list contains a structure for files in the file system, and each file structure contains another list used to store a structure for each backup of the file.
+
+\section{Conclusion}
 
 \end{document}
