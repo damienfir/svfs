@@ -296,6 +296,9 @@ int svfs_mknod(const char *path, mode_t mode, dev_t dev) {
 	my_log("svfs_mknod", path);
 	svfs_fullpath(fpath, path);
 
+	pbackuped_file f = add_backuped_file(&list,fpath);
+	f->created = 1;
+
 	retstat = mknod(fpath, mode, dev);
 	if (retstat)
 		return -errno;
@@ -532,7 +535,7 @@ int svfs_create(const char *path, mode_t mode, struct fuse_file_info *fi) {
 	return 0;
 }
 // 10 mins = time of live of backups
-#define BASE_LIVING_TIME 5
+#define BASE_LIVING_TIME 600
 #define DELTA_T 1
 
 void* GarbageCollector(pbackuped_file* list)
@@ -563,11 +566,11 @@ void* GarbageCollector(pbackuped_file* list)
 
             // adaptive N
             // actually adds x minutes where x is the number of backup files create per minutes
-            //l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
+            l->N = BASE_LIVING_TIME + (c/(BASE_LIVING_TIME/60))*60;
 
             // if their is no more backups and the file is closed -> remove it
             pbackuped_file temp = l->next;
-            if(c == 0 && l->open == 0)
+            if(c == 0)// && l->open == 0)
                 remove_backuped_file_by_file(list, l);
 
             l = temp;
@@ -615,6 +618,7 @@ struct fuse_operations svfs_oper = {
 	.releasedir = svfs_releasedir,
 	.init = svfs_init,
 	.destroy = svfs_destroy,
+	.release = svfs_release
 };
 
 void svfs_usage() {
