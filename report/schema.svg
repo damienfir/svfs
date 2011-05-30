@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="585.42859"
+   height="756.56055"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="schema.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path3766"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend"
+       style="overflow:visible">
+      <path
+         id="path3784"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective3637"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3664"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3748"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4983"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="107.94769"
+     inkscape:cy="198.2857"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="852"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-63.714283,-88.373062)">
+    <rect
+       style="fill:none;stroke:#000000;stroke-opacity:1"
+       id="rect2816"
+       width="262.63965"
+       height="206.07112"
+       x="65.486603"
+       y="403.69046" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       x="83.142853"
+       y="438.07645"
+       id="text3590"><tspan
+         sodipodi:role="line"
+         id="tspan3592"
+         x="83.142853"
+         y="438.07645">backup</tspan><tspan
+         sodipodi:role="line"
+         x="83.142853"
+         y="463.07645"
+         id="tspan3594" /><tspan
+         sodipodi:role="line"
+         x="83.142853"
+         y="488.07645"
+         id="tspan3596">int id;</tspan><tspan
+         sodipodi:role="line"
+         x="83.142853"
+         y="513.07642"
+         id="tspan3598">time_t time;</tspan><tspan
+         sodipodi:role="line"
+         x="83.142853"
+         y="538.07648"
+         id="tspan3600">backup * next;</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3602"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"><flowRegion
+         id="flowRegion3604"><rect
+           id="rect3606"
+           width="251.42857"
+           height="190"
+           x="67.14286"
+           y="486.64789" /></flowRegion><flowPara
+         id="flowPara3608"></flowPara></flowRoot>    <image
+       y="144.07646"
+       x="63.714283"
+       id="image3666"
+       height="232.28572"
+       width="264"
+       xlink:href="file:///Users/damien/EPFL/spc/hw/7/img/inkscape_pasted_image_20110530_122427.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       x="81.428574"
+       y="177.50504"
+       id="text3670"><tspan
+         sodipodi:role="line"
+         id="tspan3672"
+         x="81.428574"
+         y="177.50504">backuped_file</tspan><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="202.50504"
+         id="tspan3725" /><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="227.50504"
+         id="tspan3674">backuped_file * next;</tspan><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="252.50504"
+         id="tspan3676">char* name;</tspan><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="277.50504"
+         id="tspan3678">backup * backups;</tspan><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="302.50504"
+         id="tspan3680">int N;</tspan><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="327.50504"
+         id="tspan3682">int created;</tspan><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="352.50504"
+         id="tspan3684">int open;</tspan><tspan
+         sodipodi:role="line"
+         x="81.428574"
+         y="377.50504"
+         id="tspan3702" /></text>
+    <image
+       y="140.1479"
+       x="385.14288"
+       id="image3750"
+       height="233"
+       width="264"
+       xlink:href="file:///Users/damien/EPFL/spc/hw/7/img/inkscape_pasted_image_20110530_122711.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       x="445.71426"
+       y="169.50505"
+       id="text3754"><tspan
+         sodipodi:role="line"
+         id="tspan3756"
+         x="445.71426"
+         y="169.50505">backuped_file</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 292.85714,225.21932 c 70,-10 28.57143,-32.85714 114.28572,-54.28571"
+       id="path3758"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 258.57143,273.79075 c 37.14286,67.14286 -70.00001,80 -74.28572,145.71429"
+       id="path4582"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       x="64"
+       y="102.93361"
+       id="text4770"><tspan
+         sodipodi:role="line"
+         id="tspan4772"
+         x="64"
+         y="102.93361">backuped_file * list;</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 245.71428,99.505039 c 8.57143,17.142861 17.14286,32.857141 -17.14285,54.285711"
+       id="path4774"
+       sodipodi:nodetypes="cc" />
+    <image
+       y="636.93359"
+       x="63.714287"
+       id="image4985"
+       height="208"
+       width="264"
+       xlink:href="file:///Users/damien/EPFL/spc/hw/7/img/inkscape_pasted_image_20110530_123151.png" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 228.57142,535.21933 c 44.28572,52.85714 -15.71428,117.14285 -15.71428,117.14285"
+       id="path4989"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
+       x="88.571426"
+       y="678.07648"
+       id="text5177"><tspan
+         sodipodi:role="line"
+         id="tspan5179"
+         x="88.571426"
+         y="678.07648">backup</tspan></text>
+  </g>
+</svg>
