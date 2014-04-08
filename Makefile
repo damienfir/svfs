@@ -8,7 +8,7 @@ clean:
 	rm -f svfs *.o
 
 run:
-	rm svfs.log
+#	rm svfs.log
 	make
 	./svfs example/rootdir/ example/mountdir/
 
